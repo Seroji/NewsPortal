@@ -1,0 +1,44 @@
+№1.	User.objects.create_user('Maksim')
+	User.objects.create_user('Sergei')
+
+№3.	Category.objects.create(category='Юмор')
+	Category.objects.create(category='Наука')
+	Category.objects.create(category='Игры')
+	Category.objects.create(category='Транспорт')
+
+№4.	Post.objects.create(author=Author.objects.get(pk=3), type=Post.news, title='SpaceX отправила в космос 114 малых спутников', text='Американская компания SpaceX отправила в космос 114 малых спутников на ракете Falcon 9. Компания Илона Маска транслировала первый пуск 2023 года на своем сайте. По данным специализированного издания Spaceflight Now, спутники принадлежат операторам из 23 стран, в том числе компании EOS Data Analytics, – стартапу украинского предпринимателя Макса Полякова.')
+	Post.objects.create(author=Author.objects.get(pk=4), type=Post.news, title='Комик Тревор Ноа объявил об уходе из программы The Daily Show', text='«Мне понравилось вести шоу. Это было одним из моих самых больших испытаний. Это была одна из моих самых больших радостей. Мне нравилось пытаться понять, как заставить людей смеяться. <...> Знаете, мы вместе смеялись, мы вместе плакали. Но по прошествии семи лет я чувствую, что пришло время [уйти]», — отметил он.')
+	Post.objects.create(author=Author.objects.get(pk=3), type=Post.article, title='Все о Genshin Impact 3.4 - продолжение сюжета, следующие баннеры и новые промо-коды', text='Аль-Хайтам — новый 5* дендро-мечник, с довольно интересным стилем боя и способностями. Подробнее о нем мы напишем отдельно (следите за разделом Гайды). Персонаж станет, что не удивительно, частью баннеров первой фазы разделив это место с Сяо, актуально которого сильно возрасла с появлением адекватного анемо-саппорта.')
+
+№5.	PostCategory.objects.create(post=Post.objects.get(pk=1), category=Category.objects.get(pk=2))
+	PostCategory.objects.create(post=Post.objects.get(pk=1), category=Category.objects.get(pk=4))
+	PostCategory.objects.create(post=Post.objects.get(pk=2), category=Category.objects.get(pk=1))
+	PostCategory.objects.create(post=Post.objects.get(pk=3), category=Category.objects.get(pk=3))
+
+№6.	Comment.objects.create(post=Post.objects.get(pk=1), author=Author.objects.get(pk=4), text='Роскосмос всё-таки лучше, давайте согласимся с этим')
+	Comment.objects.create(post=Post.objects.get(pk=3), author=Author.objects.get(pk=4), text='Кс лучше')
+	Comment.objects.create(post=Post.objects.get(pk=3), author=Author.objects.get(pk=3), text='Я играю в миникрафт, самая харашая игра')
+	Comment.objects.create(post=Post.objects.get(pk=2), author=Author.objects.get(pk=3), text='Посмеялся от души ааххахахаха, спасибо ему')
+
+№7.	Comment.objects.get(pk=1).like()	x6
+	Comment.objects.get(pk=2).like()	x8
+	Comment.objects.get(pk=3).like()	x7
+	Comment.objects.get(pk=3).dislike()	x3
+	Comment.objects.get(pk=4).like()	x10
+	Comment.objects.get(pk=4).dislike()	x1
+	Post.objects.get(pk=1).like()		x15
+	Post.objects.get(pk=1).dislike()		x2
+	Post.objects.get(pk=2).like()		x16
+	Post.objects.get(pk=2).dislike()		x1
+	Post.objects.get(pk=3).like()		x20
+	Post.objects.get(pk=3).dislike()		x11
+
+№8.	Author.objects.get(pk=3).update_rating(0)
+	Author.objects.get(pk=4).update_rating(0)
+
+№9.	Author.objects.all().order_by('-rating').values('id', 'user__username', 'rating')[:1]
+
+№10. 	Post.objects.all().order_by('-rating').values('time_in', 'author__user__username', 'title')[:1]
+	Post.objects.all().order_by('-rating').first().preview()
+
+№11.	Comment.objects.filter(post=Post.objects.all().order_by('-rating').first()).values('time_in', 'author__user__username', 'rating', 'text')
