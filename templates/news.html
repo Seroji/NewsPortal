@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+<h1>Новости</h1>
+<h3>Всего новостей: {{ news | length }}</h3>
+<h3>Время сейчас: {{ time_now }}</h3>
+{% if news %}
+    <table>
+    {% for obj in news %}
+            <tr>
+                <td><h6>{{ obj.title | censor }}</h6></td>
+                <td>{{ obj.time_in | date:'d M Y' }}</td>
+                <td>{{ obj.text | truncatewords:20 | censor}}</td>
+            </tr>
+    {% endfor %}
+    </table>
+{% endif %}
+{% endblock content %}

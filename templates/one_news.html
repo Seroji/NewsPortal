@@ -1,0 +1,21 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+{{ obj.title }}
+{% endblock title %}
+
+{% block content %}
+<table>
+    <tr>
+        <h2>{{ obj.title | censor}}</h2>
+    </tr>
+    <tr>
+        <h4>{{ obj.time_in | date:'d M Y' }}</h4>
+    </tr>
+    <tr>
+        <h5>{{ obj.text | censor}}</h5>
+    </tr>
+</table>
+{% endblock content %}
