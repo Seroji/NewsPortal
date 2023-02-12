@@ -1,0 +1,49 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% load custom_tags %}
+
+{% block title %}
+Поиск новостей
+{% endblock title %}
+
+{% block content %}
+<h1>Новости</h1>
+<h3>Всего новостей: {{ news_search | length }}</h3>
+<h3>Время сейчас: {% time_now %}</h3>
+<form action="" method="get">
+    {% csrf_token %}
+   {{ filterset.form.as_p }}
+   <input type="submit" value="Найти" />
+</form>
+{% if news_search %}
+    <table>
+    {% for obj in news_search %}
+            <tr>
+                <td><h6>{{ obj.title | censor }}</h6></td>
+                <td>{{ obj.time_in | date:'d M Y' }}</td>
+                <td>{{ obj.text | truncatewords:20 | censor}}</td>
+            </tr>
+    {% endfor %}
+    </table>
+{% endif %}
+
+{% if page_obj.has_previous %}
+    <a href="?{% url_replace page=1 %}">1</a>
+    {% if page_obj.previous_page_number != 1 %}
+        ...
+        <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+    {% endif %}
+{% endif %}
+
+{{ page_obj.number }}
+
+{% if page_obj.has_next %}
+    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+    {% if paginator.num_pages != page_obj.next_page_number %}
+        ...
+        <a href="?{% url_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+    {% endif %}
+{% endif %}
+{% endblock content %}

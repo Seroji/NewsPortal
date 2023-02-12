@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -16,6 +17,9 @@ class Author(models.Model):
     @receiver(post_save, sender=User)
     def save_user_author(sender, instance, **kwargs):
         instance.author.save()
+
+    def __str__(self):
+        return f"{self.user.get_username()}"
 
     def update_rating(self, value):
         if value == self.rating:
@@ -34,6 +38,9 @@ class Author(models.Model):
 
 class Category(models.Model):
     category = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return f"{self.category.title()}"
 
 
 class Post(models.Model):
@@ -67,6 +74,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.title} {self.text[:20]}..."
+
+    def get_absolute_url(self):
+        return reverse('news_detail', args=[str(self.id)])
 
 
 class PostCategory(models.Model):
