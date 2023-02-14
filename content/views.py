@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from .models import Post
 from .filters import PostFilter
-from .forms import NewsForm
+from .forms import NewsForm, ArticleForm
 from django.urls import reverse_lazy
 
 
@@ -42,6 +42,22 @@ class NewsCreate(CreateView):
     form_class = NewsForm
     model = Post
     template_name = 'news_edit.html'
+
+    def form_valid(self, form):
+        news = form.save(commit=False)
+        news.type = 'N'
+        return super().form_valid(form)
+
+
+class ArticleCreate(CreateView):
+    form_class = ArticleForm
+    model = Post
+    template_name = 'news_edit.html'
+
+    def form_valid(self, form):
+        article = form.save(commit=False)
+        article.type = 'A'
+        return super().form_valid(form)
 
 
 class NewsEdit(UpdateView):
