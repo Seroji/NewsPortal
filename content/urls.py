@@ -1,12 +1,19 @@
-from django.urls import path
-from .views import NewsList, NewsDetail, NewsSearch, NewsCreate, NewsEdit, NewsDelete
+from django.urls import path, include
+from .views import NewsListView, NewsDetailView, NewsSearchView, NewsCreateView, NewsEditView, NewsDeleteView, \
+    ProfileView, ProfileEditView,PasswordEditView, UserRegisterView, get_author
 
 
 urlpatterns = [
-    path('', NewsList.as_view()),
-    path('<int:pk>', NewsDetail.as_view(), name='news_detail'),
-    path('search/', NewsSearch.as_view(), name='news_search'),
-    path('create/', NewsCreate.as_view(), name='news_create'),
-    path('<int:pk>/edit', NewsEdit.as_view(), name='news_edit'),
-    path('<int:pk>/delete', NewsDelete.as_view(), name='news_delete')
+    path('', NewsListView.as_view(), name='news_list'),
+    path('<int:pk>', NewsDetailView.as_view(), name='news_detail'),
+    path('search/', NewsSearchView.as_view(), name='news_search'),
+    path('create/', NewsCreateView.as_view(), name='news_create'),
+    path('<int:pk>/edit', NewsEditView.as_view(), name='news_edit'),
+    path('<int:pk>/delete', NewsDeleteView.as_view(), name='news_delete'),
+    path('sign/', include('sign.urls')),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/edit', ProfileEditView.as_view(), name='profile_edit'),
+    path('profile/edit/password', PasswordEditView.as_view(), name='password_change'),
+    path('signup/', UserRegisterView.as_view(), name='signup'),
+    path('upgrade/', get_author, name='upgrade')
 ]

@@ -1,11 +1,11 @@
 {% extends "flatpages/default.html" %}
 
 {% block title %}
-Редактирование
+Добавление новости
 {% endblock title %}
 
 {% block content %}
-<h1>Редактирование материала</h1>
+<h1>Добавление новости</h1>
 <hr>
 {% if is_author %}
     <form action="" method="post">
@@ -14,6 +14,8 @@
         <input type="submit" value="Добавить">
     </form>
 {% else %}
-    <h4>Вы не можете редактировать материал, так как не являетесь автором!</h4>
+    <h4>Вы не можете добавлять новости, так как не являетесь автором!</h4>
 {% endif %}
+<br>
+<h5><a href="{% url 'news_list'  %}">Назад</a></h5>
 {% endblock %}

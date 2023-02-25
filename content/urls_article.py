@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import ArticleCreate
+from .views import ArticleCreateView
 
 urlpatterns = [
-    path('create/', ArticleCreate.as_view(), name='article_create'),
+    path('create/', ArticleCreateView.as_view(), name='article_create'),
 ]

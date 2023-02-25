@@ -1,0 +1,15 @@
+{% extends "flatpages/default.html" %}
+
+{% block title %}
+Profile Update
+{% endblock title %}
+
+{% block content %}
+<h2>Редактирование профиля</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <h5><a href="{% url 'password_change' %}">Изменить пароль</a></h5>
+    <input type="submit" value="Продолжить">
+</form>
+{% endblock %}

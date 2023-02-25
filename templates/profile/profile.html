@@ -1,0 +1,36 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block content %}
+<table>
+    <tr>
+        <h4>Имя пользователя: {{ request.user.username }}</h4>
+    </tr>
+    <tr>
+        <h4>Электронная почта: {{ request.user.email }}</h4>
+    </tr>
+    <tr>
+        <h4>Имя: {{ request.user.first_name }}</h4>
+    </tr>
+    <tr>
+        <h4>Фамилия: {{ request.user.last_name }}</h4>
+    </tr>
+</table>
+{% if is_not_author %}
+    <h5><a href="{% url 'upgrade' %}">Стать автором</a></h5>
+{% else %}
+    <h5>Вы являетесь автором</h5>
+{% endif %}
+<table>
+    <h5><a href="{% url 'profile_edit' %}">Редактировать профиль</a></h5>
+    <h5><a href="{% url 'news_list' %}">К новостям!</a></h5>
+</table>
+<form action="{% url 'account_logout' %}" target="_self">
+    <button>Выйти из системы</button>
+</form>
+{% endblock content %}

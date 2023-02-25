@@ -18,6 +18,10 @@
         <h5>{{ obj.text | censor}}</h5>
     </tr>
 </table>
-
+{% if is_author %}
+    <form action="{{ obj.id }}/edit" target="_self">
+        <button>Редактировать материал</button>
+    </form>
+{% endif %}
 
 {% endblock content %}
