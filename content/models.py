@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
+from django.core.validators import ValidationError
+
+from datetime import datetime, timedelta
 
 
 class Author(models.Model):
@@ -38,6 +41,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     category = models.CharField(max_length=50, unique=True)
+    user = models.ManyToManyField(User, through='Subscribers')
 
     def __str__(self):
         return f"{self.category.title()}"
@@ -78,6 +82,16 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('news_detail', args=[str(self.id)])
 
+    def save(self, *args, **kwargs):
+        today = datetime.utcnow() + timedelta(hours=3)
+        user_records = Post.objects.filter(author_id=self.author_id,
+                                           time_in__day=today.day,
+                                           time_in__month=today.month).count()
+        if user_records >= 3:
+            raise ValidationError
+        else:
+            super().save()
+
 
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -100,3 +114,6 @@ class Comment(models.Model):
         self.save()
 
 
+class Subscribers(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)

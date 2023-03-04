@@ -11,8 +11,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from django.urls import reverse
+from dotenv import load_dotenv
 from pathlib import Path
 import os
+
+load_dotenv()
+OUT_PASSWORD = os.getenv('OUT_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'content',
+    'content.apps.ContentConfig',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django_filters',
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django_apscheduler',
 ]
 
 SITE_ID = 1
@@ -148,17 +153,26 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
+#AllAuth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'news_list'
 ACCOUNT_FORMS = {'signup': 'content.forms.BasicSignupForm'}
-
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = 'news_list'
 
-# LOGIN_URL = 'login'
-# LOGIN_REDIRECT_URL = 'news_list'
+#Sending E-mail messages with EmailMultiAlternatives
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'gamexr6'
+EMAIL_HOST_PASSWORD = OUT_PASSWORD
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = 'gamexr6@mail.ru'
+
+#Apscheduler
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25

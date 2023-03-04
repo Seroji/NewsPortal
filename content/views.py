@@ -1,15 +1,20 @@
+import datetime
+
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 
-from .models import Post, User
+from .models import Post, User, Subscribers, PostCategory, Category, Author
 from .filters import PostFilter
-from .forms import NewsForm, ProfileEditForm, PasswordEditForm, UserRegisterForm
+from .forms import NewsCreateForm, ProfileEditForm, PasswordEditForm, UserRegisterForm, NewsEditForm
+
+from django.core.validators import ValidationError
 
 
 class NewsListView(ListView):
@@ -36,8 +41,21 @@ class NewsDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = self.request.user
+        post_id = self.kwargs['pk']
+        category = PostCategory.objects.get(post_id=post_id).category_id
         context['is_author'] = user.groups.filter(name='author').exists()
+        context['category'] = Category.objects.get(pk=category).category
+        context['is_category_subscribe'] = not Subscribers.objects.filter(user_id=self.request.user.id,
+                                                                          category_id=category).exists()
         return context
+
+    def post(self, request, *args, **kwargs):
+        subscriber = Subscribers(
+            user=request.user,
+            category=PostCategory.objects.get(post_id=self.kwargs['pk']).category
+        )
+        subscriber.save()
+        return redirect('news_list')
 
 
 class NewsSearchView(ListView):
@@ -59,7 +77,7 @@ class NewsSearchView(ListView):
 
 
 class NewsCreateView(CreateView):
-    form_class = NewsForm
+    form_class = NewsCreateForm
     template_name = 'news_add.html'
 
     def form_valid(self, form):
@@ -73,9 +91,28 @@ class NewsCreateView(CreateView):
         context['is_author'] = user.groups.filter(name='author').exists()
         return context
 
+    def post(self, request, *args, **kwargs):
+        post = Post(
+            author=Author.objects.get(pk=request.POST['author']),
+            time_in=datetime.datetime.utcnow(),
+            title=request.POST['title'],
+            text=request.POST['text'],
+            type='N',
+        )
+        try:
+            post.save()
+            PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            return redirect('news_list')
+        except Exception:
+            form = NewsCreateForm(request.POST)
+            user = self.request.user
+            is_author = user.groups.filter(name='author').exists()
+            messages.error(self.request, 'Вы не можете добавлять более 3-х постов в день!')
+            return render(self.request, self.template_name, {'form':form, 'is_author':is_author})
+
 
 class ArticleCreateView(CreateView):
-    form_class = NewsForm
+    form_class = NewsCreateForm
     model = Post
     template_name = 'article_add.html'
 
@@ -90,9 +127,28 @@ class ArticleCreateView(CreateView):
         context['is_author'] = user.groups.filter(name='author').exists()
         return context
 
+    def post(self, request, *args, **kwargs):
+        post = Post(
+            author=Author.objects.get(pk=request.POST['author']),
+            time_in=datetime.datetime.utcnow(),
+            title=request.POST['title'],
+            text=request.POST['text'],
+            type='A',
+        )
+        try:
+            post.save()
+            PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            return redirect('news_list')
+        except Exception:
+            form = NewsCreateForm(request.POST)
+            user = self.request.user
+            is_author = user.groups.filter(name='author').exists()
+            messages.error(self.request, 'Вы не можете добавлять более 3-х постов в день!')
+            return render(self.request, self.template_name, {'form': form, 'is_author': is_author})
+
 
 class NewsEditView(UpdateView):
-    form_class = NewsForm
+    form_class = NewsEditForm
     model = Post
     template_name = 'news_edit.html'
 
@@ -106,7 +162,7 @@ class NewsEditView(UpdateView):
 class NewsDeleteView(DeleteView):
     model = Post
     template_name = 'news_delete.html'
-    success_url = reverse_lazy('news_search')
+    success_url = reverse_lazy('news_list')
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -145,8 +201,7 @@ class UserRegisterView(CreateView):
 @login_required()
 def get_author(request):
     user = request.user
-    author_group = Group.objects.get(name='authors')
-    if not request.user.groups.filter(name='authors').exists():
+    author_group = Group.objects.get(name='author')
+    if not request.user.groups.filter(name='author').exists():
         author_group.user_set.add(user)
     return redirect(to='profile')
-

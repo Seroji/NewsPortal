@@ -4,10 +4,11 @@ from django import forms
 
 from allauth.account.forms import SignupForm
 
-from .models import Post
+from .models import Post, Author
 
 
-class NewsForm(forms.ModelForm):
+class NewsCreateForm(forms.ModelForm):
+    author = forms.ModelChoiceField(queryset=Author.objects.all())
     title = forms.CharField(
         label='Заголовок',
         widget=forms.TextInput(attrs={'size':100})
@@ -17,6 +18,21 @@ class NewsForm(forms.ModelForm):
         model = Post
         fields = (
             'author',
+            'category',
+            'title',
+            'text',
+        )
+
+
+class NewsEditForm(forms.ModelForm):
+    title = forms.CharField(
+        label='Заголовок',
+        widget=forms.TextInput(attrs={'size': 100})
+    )
+
+    class Meta:
+        model = Post
+        fields = (
             'category',
             'title',
             'text',
@@ -66,10 +82,8 @@ class UserRegisterForm(UserCreationForm):
 
 
 class BasicSignupForm(SignupForm):
-
     def save(self, request):
         user = super(BasicSignupForm, self).save(request)
         basic_group = Group.objects.get(name='common')
         basic_group.user_set.add(user)
         return user
-

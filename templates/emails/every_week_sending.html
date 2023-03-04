@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p> Здравствуй, {{ name }}. В течение недели появились новые статьи из твоих любимых категорий! </p>
+    <p>Прочитать их ты можешь по ссылкам ниже:</p>
+{% for post in posts %}
+    <p><a href="http://127.0.0.1:8000/news/{{ post.id }}">{{ post.title }}</a></p>
+{%endfor%}
+</body>
+</html>
