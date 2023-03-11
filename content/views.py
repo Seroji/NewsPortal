@@ -13,6 +13,7 @@ from django.db.models import Count
 from .models import Post, User, Subscribers, PostCategory, Category, Author
 from .filters import PostFilter
 from .forms import NewsCreateForm, ProfileEditForm, PasswordEditForm, UserRegisterForm, NewsEditForm
+from .tasks import notify_subscribers
 
 from django.core.validators import ValidationError
 
@@ -97,17 +98,18 @@ class NewsCreateView(CreateView):
             time_in=datetime.datetime.utcnow(),
             title=request.POST['title'],
             text=request.POST['text'],
-            type='N',
+            type='A',
         )
         try:
             post.save()
             PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            notify_subscribers.delay(post.id)
             return redirect('news_list')
-        except Exception:
+        except ValidationError:
             form = NewsCreateForm(request.POST)
             user = self.request.user
+            messages.error(request, 'Вы не можете добавлять более 3-х постов в день!')
             is_author = user.groups.filter(name='author').exists()
-            messages.error(self.request, 'Вы не можете добавлять более 3-х постов в день!')
             return render(self.request, self.template_name, {'form':form, 'is_author':is_author})
 
 
@@ -138,12 +140,12 @@ class ArticleCreateView(CreateView):
         try:
             post.save()
             PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            notify_subscribers.delay(post.id)
             return redirect('news_list')
-        except Exception:
+        except ValidationError:
             form = NewsCreateForm(request.POST)
             user = self.request.user
             is_author = user.groups.filter(name='author').exists()
-            messages.error(self.request, 'Вы не можете добавлять более 3-х постов в день!')
             return render(self.request, self.template_name, {'form': form, 'is_author': is_author})
 
 

@@ -88,7 +88,7 @@ class Post(models.Model):
                                            time_in__day=today.day,
                                            time_in__month=today.month).count()
         if user_records >= 3:
-            raise ValidationError
+            raise ValidationError('Вы не можете добавлять более 3-х постов в день!')
         else:
             super().save()
 
