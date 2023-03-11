@@ -11,6 +11,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'print_every_5_seconds': {
         'task': 'content.tasks.every_week_sending',
-        'schedule': schedules.crontab(hour=8, minute=00, day_of_week='monday'),
+        'schedule': schedules.crontab(hour=8, minute=0, day_of_week='monday'),
     },
 }
