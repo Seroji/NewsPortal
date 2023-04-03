@@ -11301,3 +11301,18 @@ textarea.form-control-lg {
   color: black;
   text-decoration: none;
 }
+
+.news_table {
+  border-collapse: separate;
+  border-spacing: 0 20px;
+}
+
+.left_block_info {
+  position: fixed;
+  background: #d1d8f0;
+  width: 200px;
+  height: 500px;
+  left: 10px;
+  border: 0.5px solid;
+  border-radius: 20px;
+}
