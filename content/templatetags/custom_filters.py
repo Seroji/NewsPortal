@@ -3,6 +3,7 @@ from .banned import BANNED_WORDS
 
 register = template.Library()
 
+
 def type_check(value):
     if isinstance(value, str):
         return value

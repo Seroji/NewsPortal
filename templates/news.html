@@ -1,7 +1,6 @@
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
-
 {% load custom_tags %}
 
 {% block title %}
@@ -22,19 +21,25 @@
     <table align="center" cellpadding="20">
         <tr>
             <td>
-                <h5><a href="{% url 'news_create' %}">Добавить новость</a></h5>
+                <form action="{% url 'news_create' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary">Добавить новость</button>
+                </form>
             </td>
             <td>
-                <h5><a href="{% url 'article_create' %}">Добавить статью</a></h5>
+                <form action="{% url 'article_create' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-primary">Добавить статью</button>
+                </form>
             </td>
         </tr>
     </table>
 {% endif %}
 {% if news %}
-    <table>
+    <table class="news_table">
     {% for obj in news %}
-            <tr>
-                <td><h6><a href="{{ obj.id }}">{{ obj.title | censor }}</a></h6></td>
+            <tr class="news_line">
+                <td><h6><a href="{{ obj.id }}" class="news_link">{{ obj.title | censor }}</a></h6></td>
                 <td>{{ obj.time_in | date:'d M Y' }}</td>
                 <td>{{ obj.text | truncatewords:20 | censor}}</td>
             </tr>

@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.core.validators import ValidationError
+from django.core.cache import cache
 
 from datetime import datetime, timedelta
 
@@ -91,6 +92,7 @@ class Post(models.Model):
             raise ValidationError('Вы не можете добавлять более 3-х постов в день!')
         else:
             super().save()
+            cache.delete(f'post{self.pk}')
 
 
 class PostCategory(models.Model):

@@ -1,6 +1,7 @@
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
+{% load cache %}
 
 {% block title %}
 Profile
@@ -26,6 +27,7 @@ Profile
 {% else %}
     <h5>Вы являетесь автором</h5>
 {% endif %}
+{% cache 60 nav %}
 <table>
     <h5><a href="{% url 'profile_edit' %}">Редактировать профиль</a></h5>
     <h5><a href="{% url 'news_list' %}">К новостям!</a></h5>
@@ -33,4 +35,5 @@ Profile
 <form action="{% url 'account_logout' %}" target="_self">
     <button>Выйти из системы</button>
 </form>
+{% endcache %}
 {% endblock content %}

@@ -1,6 +1,8 @@
 from django.urls import path, include
+# from django.views.decorators.cache import cache_page
+
 from .views import NewsListView, NewsDetailView, NewsSearchView, NewsCreateView, NewsEditView, NewsDeleteView, \
-    ProfileView, ProfileEditView,PasswordEditView, UserRegisterView, get_author
+    ProfileView, ProfileEditView,PasswordEditView, UserRegisterView, get_author, SelfEducationView
 
 
 urlpatterns = [
@@ -15,5 +17,6 @@ urlpatterns = [
     path('profile/edit', ProfileEditView.as_view(), name='profile_edit'),
     path('profile/edit/password', PasswordEditView.as_view(), name='password_change'),
     path('signup/', UserRegisterView.as_view(), name='signup'),
-    path('upgrade/', get_author, name='upgrade')
+    path('upgrade/', get_author, name='upgrade'),
+    path('test/', SelfEducationView.as_view(), name='education')
 ]

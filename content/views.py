@@ -1,6 +1,13 @@
-import datetime
+from datetime import datetime
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    View,
+)
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -9,13 +16,19 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.core.cache import cache
+from django.core.validators import ValidationError
 
 from .models import Post, User, Subscribers, PostCategory, Category, Author
 from .filters import PostFilter
-from .forms import NewsCreateForm, ProfileEditForm, PasswordEditForm, UserRegisterForm, NewsEditForm
+from .forms import (
+    NewsCreateForm,
+    ProfileEditForm,
+    PasswordEditForm,
+    UserRegisterForm,
+    NewsEditForm,
+)
 from .tasks import notify_subscribers
-
-from django.core.validators import ValidationError
 
 
 class NewsListView(ListView):
@@ -46,17 +59,27 @@ class NewsDetailView(DetailView):
         category = PostCategory.objects.get(post_id=post_id).category_id
         context['is_author'] = user.groups.filter(name='author').exists()
         context['category'] = Category.objects.get(pk=category).category
-        context['is_category_subscribe'] = not Subscribers.objects.filter(user_id=self.request.user.id,
-                                                                          category_id=category).exists()
+        context['is_category_subscribe'] = not Subscribers.objects.filter(
+            user_id=self.request.user.id, category_id=category
+        ).exists()
         return context
 
     def post(self, request, *args, **kwargs):
         subscriber = Subscribers(
             user=request.user,
-            category=PostCategory.objects.get(post_id=self.kwargs['pk']).category
+            category=PostCategory.objects.get(
+                post_id=self.kwargs['pk']
+            ).category,
         )
         subscriber.save()
         return redirect('news_list')
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class NewsSearchView(ListView):
@@ -102,15 +125,23 @@ class NewsCreateView(CreateView):
         )
         try:
             post.save()
-            PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            PostCategory.objects.create(
+                post_id=post.id, category_id=request.POST['category']
+            )
             notify_subscribers.delay(post.id)
             return redirect('news_list')
         except ValidationError:
             form = NewsCreateForm(request.POST)
             user = self.request.user
-            messages.error(request, 'Вы не можете добавлять более 3-х постов в день!')
+            messages.error(
+                request, 'Вы не можете добавлять более 3-х постов в день!'
+            )
             is_author = user.groups.filter(name='author').exists()
-            return render(self.request, self.template_name, {'form':form, 'is_author':is_author})
+            return render(
+                self.request,
+                self.template_name,
+                {'form': form, 'is_author': is_author},
+            )
 
 
 class ArticleCreateView(CreateView):
@@ -139,14 +170,20 @@ class ArticleCreateView(CreateView):
         )
         try:
             post.save()
-            PostCategory.objects.create(post_id=post.id, category_id=request.POST['category'])
+            PostCategory.objects.create(
+                post_id=post.id, category_id=request.POST['category']
+            )
             notify_subscribers.delay(post.id)
             return redirect('news_list')
         except ValidationError:
             form = NewsCreateForm(request.POST)
             user = self.request.user
             is_author = user.groups.filter(name='author').exists()
-            return render(self.request, self.template_name, {'form': form, 'is_author': is_author})
+            return render(
+                self.request,
+                self.template_name,
+                {'form': form, 'is_author': is_author},
+            )
 
 
 class NewsEditView(UpdateView):
@@ -173,7 +210,9 @@ class ProfileView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['is_not_author'] = not self.request.user.groups.filter(name='author').exists()
+        context['is_not_author'] = not self.request.user.groups.filter(
+            name='author'
+        ).exists()
         return context
 
 
@@ -207,3 +246,10 @@ def get_author(request):
     if not request.user.groups.filter(name='author').exists():
         author_group.user_set.add(user)
     return redirect(to='profile')
+
+
+class SelfEducationView(View):
+    template_name = 'test.html'
+
+    def get(self, request):
+        return render(request, 'test.html')

@@ -11286,3 +11286,22 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+
+.news_line {
+  color: black;
+  border: 0.5px solid; 
+  border-radius: 2px;
+}
+
+.news_line:hover {
+  background-color: #d8dee8;
+}
+
+.news_table {
+  border-spacing: 0px 2em;
+}
+
+.news_link {
+  color: black;
+  text-decoration: none;
+}
