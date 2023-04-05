@@ -39,6 +39,7 @@ class NewsListView(ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
+        right_posts = Post.objects.all().order_by('-id')[4:6]
         newest = Post.objects.latest('time_in')
         newest_posts = Post.objects.all().order_by('-id')[1:3]
         context = super().get_context_data()
@@ -48,6 +49,7 @@ class NewsListView(ListView):
         context['number_of_posts'] = number_of_posts.get('total_news')
         context['last_news'] = newest_posts
         context['newest'] = newest
+        context['right_posts'] = right_posts
         return context
 
 

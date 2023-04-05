@@ -42,15 +42,22 @@ a:hover {
 }
 
 .my-carousel {
-    padding: 0;
+    margin-left: 0;
 }
 
-.my-col {
+.cont {
+    margin-top: 10px;
+    margin-bottom: 10px; 
     margin-left: 0;
     margin-right: 0;
 }
 
-.container {
-    margin-top: 10px;
-    margin-bottom: 10px; 
+.right-news-main {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.row .right-news-main a {
+    text-decoration: none;
 }
