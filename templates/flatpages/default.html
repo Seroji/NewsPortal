@@ -31,9 +31,13 @@
             <i class="fa-regular fa-user fa-lg user-icon" style="color: #000000;"></i>
           </a>
           <ul class="dropdown-menu">
+            {% if user.is_authenticated %}
             <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+            {% elif %}
+            <li><a class="dropdown-item" href="{% url 'login %}">Войти</a></li>
+            {% endif %}
           </ul>
         </li>
       </ul>
