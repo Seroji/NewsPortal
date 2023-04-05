@@ -39,11 +39,15 @@ class NewsListView(ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
+        newest = Post.objects.latest('time_in')
+        newest_posts = Post.objects.all().order_by('-id')[1:3]
         context = super().get_context_data()
         number_of_posts = Post.objects.aggregate(total_news=Count('id'))
         user = self.request.user
         context['is_author'] = user.groups.filter(name='author').exists()
         context['number_of_posts'] = number_of_posts.get('total_news')
+        context['last_news'] = newest_posts
+        context['newest'] = newest
         return context
 
 
@@ -118,7 +122,7 @@ class NewsCreateView(CreateView):
     def post(self, request, *args, **kwargs):
         post = Post(
             author=Author.objects.get(pk=request.POST['author']),
-            time_in=datetime.datetime.utcnow(),
+            time_in=datetime.utcnow(),
             title=request.POST['title'],
             text=request.POST['text'],
             type='A',

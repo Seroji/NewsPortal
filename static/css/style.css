@@ -1,3 +1,8 @@
+html {
+    font-size: 16px;
+    margin-left: 8%;
+    margin-right: 8%;
+}
 
 
 header {
@@ -5,10 +10,47 @@ header {
     border-top: none;
     border-left: none;
     border-right: none;
-    margin-left: 8%;
-    margin-right: 8%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+section {
+    padding: 50px 0;
+}
+
+a {
+    color: #111;
+}
+
+a:hover {
+    color: #555;
 }
 
 .news-title {
     margin-left: 42%;
+}
+
+.right-menu {
+    position: absolute;
+    top: 0px;
+    left: 70%; 
+}
+
+.my-carousel {
+    padding: 0;
+}
+
+.my-col {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.container {
+    margin-top: 10px;
+    margin-bottom: 10px; 
 }
