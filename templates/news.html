@@ -20,7 +20,7 @@
         </div>
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img src="../static/img/{{ newest.id }}.jpg" class="d-block w-100" alt="...">
+            <a href="all/{{ newest.id }}"><img src="../static/img/{{ newest.id }}.jpg" class="d-block w-100" alt="..."></a>
             <div class="carousel-caption d-none d-md-block">
               <h5>{{ newest.title }}</h5>
               <p>{{ newest.text }}</p>
@@ -28,7 +28,7 @@
           </div>
           {% for obj in last_news %}
           <div class="carousel-item">
-            <img src="../static/img/{{ obj.id }}.jpg" class="d-block w-100" alt="...">
+            <a href="all/{{ obj.id }}"><img src="../static/img/{{ obj.id }}.jpg" class="d-block w-100" alt="..."></a>
             <div class="carousel-caption d-none d-md-block">
               <h5>{{ obj.title}}</h5>
               <p>{{ obj.text }}</p>
@@ -52,7 +52,7 @@
       {% for obj in right_posts %}
       <div class="row right-news-main">
         <div class="col-md-12">
-          <a href="{{ obj.id }}">
+          <a href="all/{{ obj.id }}">
             <h5>{{ obj.title }}</h5>
           </a>
           <p>{{ obj.text }}</p>
@@ -64,6 +64,19 @@
   </div>
 </div>
 <section>
-
+  <div class="container-fluid">
+    <div class="row g-2">
+      {% for obj in other_posts %}
+      <div class="col-md-4 text-center news-list-main-page">
+        <div class="border-bottom-div">
+          <b>{{ obj.title }}</b>
+          <a href="all/{{ obj.id }}"></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </section>
+<br>
+<p class="text-end all-news-action"><a href="{% url 'all_news' %}">Все новости...</a></p>
 {% endblock content %}

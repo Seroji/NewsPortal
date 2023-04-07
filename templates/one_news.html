@@ -1,47 +1,43 @@
 {% extends 'flatpages/default.html' %}
 
-{% load custom_filters %}
-
 {% block title %}
 {{ obj.title }}
 {% endblock title %}
 
 {% block content %}
-<h4>Категория: {{ category }}</h4>
-<table>
-    <tr>
-        <h2>{{ obj.title | censor}}</h2>
-    </tr>
-    <tr>
-        <h4>{{ obj.time_in | date:'d M Y' }}</h4>
-    </tr>
-    <tr>
-        <h5>{{ obj.text | censor}}</h5>
-    </tr>
-</table>
-{% if is_author %}
-    <form action="{{ obj.id }}/edit" target="_self">
-        <button>Редактировать материал</button>
+<div class="container-fluid text-end">
+    Категория: <b>{{ category }}</b>
+    <form action="" method="post" style="display: inline-block">
+        {% csrf_token %}
+        {% if not is_category_subscribe %}
+        <button type="submit" name="sub" class="sub-but">
+            <i class="fa-regular fa-heart fa-lg" style="color: #000000;"></i>
+        </button>
+        {% else %}
+        <button type="submit" name="unsub" class="sub-but">
+            <i class="fa-solid fa-heart fa-lg" style="color: #000000;"></i>
+        </button>
+        {% endif %}
     </form>
-<br>
-{% endif %}
-{% if is_category_subscribe %}
-<!--<form action="" method="post">-->
-<!--    {% csrf_token %}-->
-<!--    <input type="submit" value="Подписать на рассылку этой категории">-->
-<!--</form>-->
-<form id="myform" action="" method="post" style="display:none;">
-    {% csrf_token %}
-</form>
-{% if user.is_authenticated %}
-    <h5 onclick='document.getElementById("myform").submit()'>
-        <font color="#1d13f5">
-              Подписаться на рассылку этой категории
-        </font>
-    </h5>
-{% endif %}
-{% else %}
-<h5>Вы подписаны на рассылку данной категории новостей</h5>
-{% endif %}
-
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <p class="news-detail">{{ obj.time_in | date }}, <b>{{ obj.title }}.</b></p>
+    </div>
+    <div class="row">
+        <p class="news-detail">{{ obj.text }}</p>
+    </div>
+</div>
+<hr>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <p class="text-end">
+                <a href="{% url 'news_list' %}">
+                    Назад
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
 {% endblock content %}
