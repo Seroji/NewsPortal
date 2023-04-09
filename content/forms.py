@@ -40,10 +40,10 @@ class NewsEditForm(forms.ModelForm):
 
 
 class ProfileEditForm(forms.ModelForm):
-    username = forms.CharField(max_length=50, label='Имя пользователя', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
-    email = forms.EmailField(label='Электронная почта', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'email'})))
-    first_name = forms.CharField(max_length=50, label='Имя', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
-    last_name = forms.CharField(max_length=50, label='Фамилия', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
+    username = forms.CharField(max_length=50, label='Имя пользователя', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text'}))
+    email = forms.EmailField(label='Электронная почта', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'email'}))
+    first_name = forms.CharField(max_length=50, label='Имя', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text'}))
+    last_name = forms.CharField(max_length=50, label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text'}))
 
     class Meta:
         model = User
@@ -51,16 +51,21 @@ class ProfileEditForm(forms.ModelForm):
             'username',
             'email',
             'first_name',
-            'last_name'
+            'last_name',
         )
 
 
 class PasswordEditForm(PasswordChangeForm):
+    old_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+    new_password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+    new_password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password'}))
+
     class Meta:
         model = User
         fields = (
-            'password1',
-            'password2'
+            'old_password',
+            'new_password1',
+            'new_password2',
         )
 
 

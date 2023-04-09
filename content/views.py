@@ -264,7 +264,7 @@ class PasswordEditView(LoginRequiredMixin, PasswordChangeView):
 class UserRegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
-    success_url = 'news_list'
+    success_url = reverse_lazy('profile')
     template_name = 'sign/signup.html'
 
 
