@@ -40,10 +40,10 @@ class NewsEditForm(forms.ModelForm):
 
 
 class ProfileEditForm(forms.ModelForm):
-    username = forms.CharField(max_length=50, label='Имя пользователя')
-    email = forms.EmailField(label='Электронная почта')
-    first_name = forms.CharField(max_length=50, label='Имя')
-    last_name = forms.CharField(max_length=50, label='Фамилия')
+    username = forms.CharField(max_length=50, label='Имя пользователя', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
+    email = forms.EmailField(label='Электронная почта', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'email'})))
+    first_name = forms.CharField(max_length=50, label='Имя', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
+    last_name = forms.CharField(max_length=50, label='Фамилия', widget=(forms.TextInput(attrs={'class': 'form-control', 'type': 'text'})))
 
     class Meta:
         model = User

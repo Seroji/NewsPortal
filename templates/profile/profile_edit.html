@@ -9,7 +9,6 @@ Profile Update
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <h5><a href="{% url 'password_change' %}">Изменить пароль</a></h5>
-    <input type="submit" value="Продолжить">
+    <button type="submit" class="btn btn-primary">Отправить</button>
 </form>
 {% endblock %}

@@ -58,7 +58,7 @@ class AllNewsList(ListView):
     template_name = 'all_news.html'
     context_object_name = 'news'
     paginate_by = 10
-    ordering = 'time_in'
+    ordering = '-time_in'
 
 
 class NewsDetailView(DetailView):
@@ -239,7 +239,7 @@ class ProfileView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['is_not_author'] = not self.request.user.groups.filter(
+        context['is_author'] = self.request.user.groups.filter(
             name='author'
         ).exists()
         return context

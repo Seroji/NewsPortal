@@ -129,3 +129,9 @@ a:hover {
     color: black;
     text-decoration: none;
 }
+
+.profile-table {
+    font-size: 20px;
+    border-collapse: separate;
+    border-spacing: 20px 20px;
+}

@@ -6,10 +6,8 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def url_replace(context, **kwargs):
+def url_replace(context, **kwargs): 
     d = context['request'].GET.copy()
-    print(context['request'].GET)
-    print(kwargs.items())
     for k, v in kwargs.items():
         d[k] = v
     return d.urlencode()
