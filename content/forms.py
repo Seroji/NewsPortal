@@ -1,8 +1,9 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.core.exceptions import ValidationError
 from django import forms
 
-from allauth.account.forms import SignupForm
+from allauth.account.forms import LoginForm
 
 from .models import Post, Author
 
@@ -70,9 +71,21 @@ class PasswordEditForm(PasswordChangeForm):
 
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(label='Электронная почта')
-    first_name = forms.CharField(label='Имя')
-    last_name = forms.CharField(label='Фамилия')
+    email = forms.CharField(label='Электронная почта', widget=forms.EmailInput(attrs={'class': 'form-control', 'type': 'email', 'style': 'width:500px'}))
+    first_name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text', 'style': 'width:500px'}))
+    last_name = forms.CharField(label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text', 'style': 'width:500px'}))
+    username = forms.CharField(label='Имя пользователя', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text', 'style': 'width:500px'}))
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password', 'style': 'width:500px'}))
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput(attrs={'class': 'form-control', 'type': 'password', 'style': 'width:500px'}))
+
+    def clean(self):
+        super().clean()
+        register_email = self.cleaned_data.get('email')
+        if User.objects.filter(email=register_email):
+            raise ValidationError("Пользователь с таким E-mail уже существует!")
+        else:
+            return self.cleaned_data
+        
 
     class Meta:
         model = User
@@ -84,11 +97,19 @@ class UserRegisterForm(UserCreationForm):
             'password1',
             'password2'
         )
+    
 
-
-class BasicSignupForm(SignupForm):
-    def save(self, request):
-        user = super(BasicSignupForm, self).save(request)
-        basic_group = Group.objects.get(name='common')
-        basic_group.user_set.add(user)
-        return user
+class CustomLoginForm(LoginForm):
+    def __init__(self, *args, **kwargs):
+        super(CustomLoginForm, self).__init__(*args, **kwargs)
+        self.fields['login'].widget.attrs.update({
+            'class': 'form-control mx-auto',
+            'type': 'email',
+            'style':'width:500px',
+        })
+        self.fields['password'].widget.attrs.update({
+            'class': 'form-control mx-auto',
+            'type': 'password',
+            'style':'width:500px',
+        })
+        

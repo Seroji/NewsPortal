@@ -161,7 +161,10 @@ ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'news_list'
-ACCOUNT_FORMS = {'signup': 'content.forms.BasicSignupForm'}
+ACCOUNT_FORMS = {
+                'signup': 'content.forms.BasicSignupForm',
+                 'login': 'content.forms.CustomLoginForm',
+                 }
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 LOGIN_URL = '/accounts/login/'

@@ -267,6 +267,13 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('profile')
     template_name = 'sign/signup.html'
 
+    def form_valid(self, form):
+        group = Group.objects.get(name='common')
+        self.object = form.save()
+        user_id = User.objects.get(username=self.object)
+        group.user_set.add(user_id)
+        return super().form_valid(form)
+
 
 @login_required()
 def get_author(request):
