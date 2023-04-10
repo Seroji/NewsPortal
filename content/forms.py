@@ -5,20 +5,19 @@ from django import forms
 
 from allauth.account.forms import LoginForm
 
-from .models import Post, Author
+from .models import Post, Author, Category
 
 
 class NewsCreateForm(forms.ModelForm):
-    author = forms.ModelChoiceField(queryset=Author.objects.all())
-    title = forms.CharField(
-        label='Заголовок',
-        widget=forms.TextInput(attrs={'size':100})
-    )
+    title = forms.CharField(label='Заголовок', widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'text'}))
+    text = forms.CharField(label='Содержание', widget=forms.Textarea(attrs={'class': 'form-control', 'type': 'text', 'rows':'5'}))
+    category = forms.ChoiceField(
+                                choices=[(category.pk, category) for category in Category.objects.all()], 
+                                 widget=forms.Select(attrs={'class': 'form-select form-select-sm'}))
 
     class Meta:
         model = Post
         fields = (
-            'author',
             'category',
             'title',
             'text',
@@ -34,6 +33,7 @@ class NewsEditForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = (
+            'author',
             'category',
             'title',
             'text',

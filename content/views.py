@@ -133,9 +133,15 @@ class NewsCreateView(CreateView):
     form_class = NewsCreateForm
     template_name = 'news_add.html'
 
+    def get(self, request):
+        super().get(self.request)
+        form = NewsCreateForm
+        return render(request, self.template_name, {'form': form})
+
     def form_valid(self, form):
         news = form.save(commit=False)
         news.type = 'N'
+        news.author = self.request.user
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -146,7 +152,8 @@ class NewsCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         post = Post(
-            author=Author.objects.get(pk=request.POST['author']),
+            # author=Author.objects.get(pk=request.POST['author']),
+            author=Author.objects.get(user=self.request.user),
             time_in=datetime.utcnow(),
             title=request.POST['title'],
             text=request.POST['text'],
@@ -157,7 +164,7 @@ class NewsCreateView(CreateView):
             PostCategory.objects.create(
                 post_id=post.id, category_id=request.POST['category']
             )
-            notify_subscribers.delay(post.id)
+            # notify_subscribers.delay(post.id)
             return redirect('news_list')
         except ValidationError:
             form = NewsCreateForm(request.POST)
