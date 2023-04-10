@@ -15,7 +15,7 @@
 
       {% if socialaccount_providers %}
       <p>Пожалуйста, войдите через один
-        из существующих аккаунтов. <a href="{% url 'signup' %}">Зарегистрируйтесь</a>
+        из существующих аккаунтов. <a href="{% url 'account_signup' %}">Зарегистрируйтесь</a>
         на <b>Новостном портале</b> или войдите через сервис, предложенный ниже:</p>
 
       <div class="socialaccount_ballot">
@@ -51,7 +51,7 @@
           {{ form.password }}
         </div>
         <br>
-        <button class="primaryAction" type="submit">{% trans "Войти" %}</button>
+        <button class="primaryAction btn btn-primary" type="submit">{% trans "Войти" %}</button>
       </form>
     </div>
   </div>

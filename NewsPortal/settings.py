@@ -151,6 +151,18 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -162,7 +174,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGOUT_REDIRECT_URL = 'news_list'
 ACCOUNT_FORMS = {
-                'signup': 'content.forms.BasicSignupForm',
+                'signup': 'content.forms.UserRegisterForm',
                  'login': 'content.forms.CustomLoginForm',
                  }
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
