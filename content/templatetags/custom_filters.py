@@ -1,5 +1,5 @@
 from django import template
-from .banned import BANNED_WORDS
+from .banned import forbidden_words
 
 register = template.Library()
 
@@ -40,7 +40,7 @@ def censor(value):
         i = -1
         for word in lower_str:
             i += 1
-            if word in BANNED_WORDS:
+            if word in forbidden_words:
                 word = replace_with_stars(word)
             word = checking_letter(word, original_str, i)
             result.append(word)
