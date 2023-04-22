@@ -6,21 +6,15 @@
 
 {% block content %}
 <h1>Добавление статьи</h1>
-<hr>
-{% if messages %}
-    {% for message in messages %}
-        {{ message }}
-    {% endfor %}
-{% endif %}
-{% if is_author %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Добавить">
-    </form>
-{% else %}
-    <h4>Вы не можете добавлять статьи, так как не являетесь автором!</h4>
-{% endif %}
-<br>
-<h5><a href="{% url 'news_list'  %}">Назад</a></h5>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-primary" type="submit">Добавить</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

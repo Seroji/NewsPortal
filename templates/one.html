@@ -1,0 +1,45 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+{{ obj.title }}
+{% endblock title %}
+
+{% block content %}
+<h4>Категория: {{ category }}</h4>
+<table>
+    <tr>
+        <h2>{{ obj.title }}</h2>
+    </tr>
+    <tr>
+        <h4>{{ obj.time_in | date:'d M Y' }}</h4>
+    </tr>
+    <tr>
+        <h5>{{ obj.text }}</h5>
+    </tr>
+</table>
+{% if is_author %}
+<form action="{{ obj.id }}/edit" target="_self">
+    <button>Редактировать материал</button>
+</form>
+<br>
+{% endif %}
+{% if is_category_subscribe %}
+<!--<form action="" method="post">-->
+<!--    {% csrf_token %}-->
+<!--    <input type="submit" value="Подписать на рассылку этой категории">-->
+<!--</form>-->
+<form id="myform" action="" method="post" style="display:none;">
+    {% csrf_token %}
+</form>
+{% if user.is_authenticated %}
+<h5 onclick='document.getElementById("myform").submit()'>
+    <font color="#1d13f5">
+        Подписаться на рассылку этой категории
+    </font>
+</h5>
+{% endif %}
+{% else %}
+<h5>Вы подписаны на рассылку данной категории новостей</h5>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,66 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_tags %}
+
+{% block title %}
+Все новости
+{% endblock title %}
+
+
+{% block content %}
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 text-center">Название новости</div>
+        <div class="col-md-3 text-center">Дата</div>
+        <div class="col-md-5 text-center">Текст</div>
+        <div class="col-md-1 text-center">Автор</div>
+    </div>
+</div>
+<hr>
+<div class="container">
+    {% for obj in news %}
+    <a href="{{ obj.id }}" class="all-news-link">
+    <div class="row all-news-block">
+        <div class="col-md-3 text-center">{{ obj.title }}</div>
+        <div class="col-md-3 text-center">{{ obj.time_in | date }}</div>
+        <div class="col-md-5 text-center">{{ obj.text }}</div>
+        <div class="col-md-1 text-center">{{ obj.author }}</div>
+    </div>
+    </a>
+    {% endfor %}
+</div>
+<br>
+<div class="container">
+  <div class="row text-end">
+    <div class="col">
+      <a href="{% url 'news_list' %}">Назад...</a>
+    </div>
+  </div>
+</div>
+<br>
+<div class="container">
+    <div class="row text-center">
+        <div class="col">
+            {% if page_obj.has_previous %}
+                <a href="?{% url_replace page=1 %}">1</a>
+                {% if page_obj.previous_page_number != 1 %}
+                    ...
+                    <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+                {% endif %}
+            {% endif %}
+            {{ page_obj.number }}
+            {% if page_obj.has_next %}
+                {% if page_obj.next_page_number != paginator.num_pages  %}
+                    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+                    ...
+                    <a href="?{% url_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
+                {% else %}
+                    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<br>
+{% endblock content %}

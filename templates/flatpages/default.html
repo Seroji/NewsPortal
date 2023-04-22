@@ -1,49 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>{% block title %}{% endblock title %}</title>
-        {% load static %}
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-   <div class="container">
-       <a class="navbar-brand" href="{% url 'news_list' %}">Новостная лента</a>
-       <button class="navbar-toggler" type="button" data-toggle="collapse"
-               data-target="#navbarResponsive"
-               aria-controls="navbarResponsive" aria-expanded="false"
-               aria-label="Toggle navigation">
-           <span class="navbar-toggler-icon"></span>
-       </button>
-       <div class="collapse navbar-collapse" id="navbarResponsive">
-           <ul class="navbar-nav ml-auto">
-               <li class="nav-item active">
-                   <a class="nav-link" href="#">Home
-                       <span class="sr-only">(current)</span>
-                   </a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/about/">About</a>
-               </li>
-               <li class="nav-item">
-                   <a class="nav-link" href="/contacts/">Contact</a>
-               </li>
-           </ul>
-       </div>
-   </div>
-</nav>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                   {% block content %}
-                   {% endblock content %}
-                </div>
-            </div>
+<html lang="ru">
+
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock title %}</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon.jpg' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon.jpg' %}">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <!-- Шрифты с Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+  <!-- Иконки -->
+  <script src="https://kit.fontawesome.com/a296ad3e95.js" crossorigin="anonymous"></script>
+  <!-- Собственный CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'news_list' %}">НОВОСТНОЙ ПОРТАЛ</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              {% if request.user.is_authenticated %}
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                {{ request.user.username }}
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
+                <li><a class="dropdown-item" href="#">Избранные категории</a></li>
+                <li><a class="dropdown-item" href="{% url 'news_create' %}">Добавить новость</a></li>
+                <li><a class="dropdown-item" href="{% url 'article_create' %}">Добавить статью</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'account_logout' %}">Выйти</a></li>
+                {% else %}
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  Гость
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Войти</a></li>
+                </ul>
+                {% endif %}
+            </li>
+          </ul>
         </div>
-    </body>
+      </div>
+    </nav>
+  </header>
+  {% block content %}
+  {% endblock content %}
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
 </html>

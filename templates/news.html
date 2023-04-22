@@ -1,63 +1,83 @@
 {% extends 'flatpages/default.html' %}
 
-{% load custom_filters %}
-{% load custom_tags %}
-
 {% block title %}
-Новости
+Новостной портал
 {% endblock title %}
 
 {% block content %}
-{% if request.user.is_authenticated %}
-    <h5 align="right">Авторизованный пользователь: <a href="profile/">{{ request.user.username }}</a></h5>
-{% else %}
-    <h5 align="right">Вы не авторизованы!</h5>
-    <h5 align="right"><a href="{% url 'account_login' %}">Войти в систему</a></h5>
-{% endif %}
-{% if is_author %}
-<div class="left_block_info">
-    <p>Быстрая навигация</p>
-    <form action="{% url 'news_create' %}">
-        {% csrf_token %}
-        <button class="btn btn-primary">Добавить новость</button>
-    </form>
-    <br>
-    <form action="{% url 'article_create' %}">
-        {% csrf_token %}
-        <button class="btn btn-primary">Добавить статью</button>
-    </form>
+<div class="container-fluid cont">
+  <div class="row">
+    <div class="col-md-7">
+      <div id="carouselExampleCaptions" data-bs-interval="5000" class="carousel slide my-carousel carousel-fade"
+        data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+            aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+            aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+            aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <a href="all/{{ newest.id }}"><img src="../static/img/{{ newest.id }}.jpg" class="d-block w-100"
+                alt="..."></a>
+            <div class="carousel-caption d-none d-md-block">
+              <h5>{{ newest.title }}</h5>
+              <p>{{ newest.text }}</p>
+            </div>
+          </div>
+          {% for obj in last_news %}
+          <div class="carousel-item">
+            <a href="all/{{ obj.id }}"><img src="../static/img/{{ obj.id }}.jpg" class="d-block w-100" alt="..."></a>
+            <div class="carousel-caption d-none d-md-block">
+              <h5>{{ obj.title}}</h5>
+              <p>{{ obj.text }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+          data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Предыдущий</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+          data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Следующий</span>
+        </button>
+      </div>
+    </div>
+    <div class="col-md-4 my-auto text-center">
+      {% for obj in right_posts %}
+      <div class="row right-news-main">
+        <div class="col-md-12">
+          <a href="all/{{ obj.id }}">
+            <h5>{{ obj.title }}</h5>
+          </a>
+          <p>{{ obj.text }}</p>
+          <p class="text-end date-end-text">{{ obj.time_in | date }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
-{% endif %}
-<h1>Новости</h1>
-<h3>Всего новостей: {{ number_of_posts }}</h3>
-<h3>Время сейчас: {% now "H:i l" %}</h3>
-{% if news %}
-    <table class="news_table">
-    {% for obj in news %}
-            <tr class="news_line">
-                <td><h6><a href="{{ obj.id }}" class="news_link">{{ obj.title | censor }}</a></h6></td>
-                <td>{{ obj.time_in | date:'d M Y' }}</td>
-                <td>{{ obj.text | truncatewords:20 | censor}}</td>
-            </tr>
-    {% endfor %}
-    </table>
-{% endif %}
-
-{% if page_obj.has_previous %}
-    <a href="?{% url_replace page=1 %}">1</a>
-    {% if page_obj.previous_page_number != 1 %}
-        ...
-        <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
-    {% endif %}
-{% endif %}
-
-{{ page_obj.number }}
-
-{% if page_obj.has_next %}
-    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
-    {% if paginator.num_pages != page_obj.next_page_number %}
-        ...
-        <a href="?{% url_replace page=paginator.num_pages %}">{{ paginator.num_pages }}</a>
-    {% endif %}
-{% endif %}
+<section>
+  <div class="container-fluid">
+    <div class="row g-2">
+      {% for obj in other_posts %}
+      <div class="col-md-4 text-center news-list-main-page">
+        <div class="border-bottom-div">
+          <b>{{ obj.title }}</b>
+          <a href="all/{{ obj.id }}"></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<br>
+<p class="text-end all-news-action"><a href="{% url 'all_news' %}">Все новости...</a></p>
 {% endblock content %}

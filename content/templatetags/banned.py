@@ -1,4 +1,4 @@
-BANNED_WORDS = [
+forbidden_words = [
     'космос',
     'продолжение',
     'Комик',

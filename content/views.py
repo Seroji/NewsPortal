@@ -11,7 +11,7 @@ from django.views.generic import (
 from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
@@ -35,16 +35,30 @@ class NewsListView(ListView):
     model = Post
     template_name = 'news.html'
     context_object_name = 'news'
-    ordering = '-time_in'
-    paginate_by = 10
 
     def get_context_data(self, **kwargs):
+        right_posts = Post.objects.all().order_by('-id')[4:6]
+        newest = Post.objects.latest('time_in')
+        newest_posts = Post.objects.all().order_by('-id')[1:3]
+        other_posts = Post.objects.all().order_by('-id')[6:12]
         context = super().get_context_data()
         number_of_posts = Post.objects.aggregate(total_news=Count('id'))
         user = self.request.user
         context['is_author'] = user.groups.filter(name='author').exists()
         context['number_of_posts'] = number_of_posts.get('total_news')
+        context['last_news'] = newest_posts
+        context['newest'] = newest
+        context['right_posts'] = right_posts
+        context['other_posts'] = other_posts
         return context
+    
+    
+class AllNewsList(ListView):
+    model = Post
+    template_name = 'all_news.html'
+    context_object_name = 'news'
+    paginate_by = 10
+    ordering = '-time_in'
 
 
 class NewsDetailView(DetailView):
@@ -59,20 +73,26 @@ class NewsDetailView(DetailView):
         category = PostCategory.objects.get(post_id=post_id).category_id
         context['is_author'] = user.groups.filter(name='author').exists()
         context['category'] = Category.objects.get(pk=category).category
-        context['is_category_subscribe'] = not Subscribers.objects.filter(
-            user_id=self.request.user.id, category_id=category
-        ).exists()
+        context['is_category_subscribe'] = self.check_subcriber(self.request)
         return context
 
     def post(self, request, *args, **kwargs):
-        subscriber = Subscribers(
+        redir_id = self.kwargs['pk']
+        if 'sub' in request.POST:
+            subscriber = Subscribers(
             user=request.user,
             category=PostCategory.objects.get(
                 post_id=self.kwargs['pk']
-            ).category,
-        )
-        subscriber.save()
-        return redirect('news_list')
+            ).category)
+            subscriber.save()
+        elif 'unsub' in request.POST:
+            Subscribers.objects.filter(
+                user = request.user,
+                category = PostCategory.objects.get(
+                post_id=self.kwargs['pk']
+                ).category
+            ).delete()
+        return HttpResponseRedirect(f'{redir_id}')
 
     def get_object(self, *args, **kwargs):
         obj = cache.get(f'post-{self.kwargs["pk"]}', None)
@@ -80,6 +100,15 @@ class NewsDetailView(DetailView):
             obj = super().get_object(queryset=self.queryset)
             cache.set(f'post-{self.kwargs["pk"]}', obj)
         return obj
+    
+    def check_subcriber(self, request, **kwargs):
+        post_id = self.kwargs['pk']
+        category = PostCategory.objects.get(post_id=post_id).category_id
+        res = Subscribers.objects.filter(
+            user_id=self.request.user.id, category_id=category
+        ).exists()
+        return res
+
 
 
 class NewsSearchView(ListView):
@@ -104,9 +133,15 @@ class NewsCreateView(CreateView):
     form_class = NewsCreateForm
     template_name = 'news_add.html'
 
+    def get(self, request):
+        super().get(self.request)
+        form = NewsCreateForm
+        return render(request, self.template_name, {'form': form})
+
     def form_valid(self, form):
         news = form.save(commit=False)
         news.type = 'N'
+        news.author = self.request.user
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -117,8 +152,9 @@ class NewsCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         post = Post(
-            author=Author.objects.get(pk=request.POST['author']),
-            time_in=datetime.datetime.utcnow(),
+            # author=Author.objects.get(pk=request.POST['author']),
+            author=Author.objects.get(user=self.request.user),
+            time_in=datetime.utcnow(),
             title=request.POST['title'],
             text=request.POST['text'],
             type='A',
@@ -128,7 +164,7 @@ class NewsCreateView(CreateView):
             PostCategory.objects.create(
                 post_id=post.id, category_id=request.POST['category']
             )
-            notify_subscribers.delay(post.id)
+            # notify_subscribers.delay(post.id)
             return redirect('news_list')
         except ValidationError:
             form = NewsCreateForm(request.POST)
@@ -210,7 +246,7 @@ class ProfileView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['is_not_author'] = not self.request.user.groups.filter(
+        context['is_author'] = self.request.user.groups.filter(
             name='author'
         ).exists()
         return context
@@ -235,8 +271,15 @@ class PasswordEditView(LoginRequiredMixin, PasswordChangeView):
 class UserRegisterView(CreateView):
     model = User
     form_class = UserRegisterForm
-    success_url = 'news_list'
+    success_url = reverse_lazy('profile')
     template_name = 'sign/signup.html'
+
+    def form_valid(self, form):
+        group = Group.objects.get(name='common')
+        self.object = form.save()
+        user_id = User.objects.get(username=self.object)
+        group.user_set.add(user_id)
+        return super().form_valid(form)
 
 
 @login_required()
