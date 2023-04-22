@@ -1,0 +1,5 @@
+2023-04-22 17:43:36,939 INFO autoreload Watching for file changes with StatReloader
+2023-04-22 17:43:50,424 INFO autoreload C:\pythonProjects\NewsPortal\NewsPortal\settings.py changed, reloading.
+2023-04-22 17:43:50,856 INFO autoreload Watching for file changes with StatReloader
+2023-04-22 17:43:57,883 INFO autoreload Watching for file changes with StatReloader
+2023-04-22 17:44:29,603 INFO autoreload C:\pythonProjects\NewsPortal\NewsPortal\settings.py changed, reloading.

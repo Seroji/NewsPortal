@@ -274,7 +274,7 @@ LOGGING = {
             'formatter': 'info_messages',
             'filename': 'general.log'
         },
-        'file_info': {
+        'file_security': {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.FileHandler',
@@ -310,7 +310,7 @@ LOGGING = {
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['file_seecurity'],
+            'handlers': ['file_security'],
             'propagate': False,
         }
     }
