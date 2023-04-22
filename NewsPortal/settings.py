@@ -256,7 +256,7 @@ LOGGING = {
             'formatter': 'debug_messages'
         },
         'console_warning': {
-            'level': 'DEBUG',
+            'level': 'WARNING',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'warning_messages'
@@ -273,6 +273,13 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'formatter': 'info_messages',
             'filename': 'general.log'
+        },
+        'file_error': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'formatter': 'error_messages',
+            'filename': 'error.log'
         },
         'file_security': {
             'level': 'DEBUG',
@@ -294,19 +301,19 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['file_info', 'email_error'],
+            'handlers': ['file_error', 'email_error'],
             'propagate': False,
         },
         'django.server': {
-            'handlers': ['file_info', 'email_error'],
+            'handlers': ['file_error', 'email_error'],
             'propagate': False,
         },
         'django.template': {
-            'handlers': ['file_info',],
+            'handlers': ['file_error',],
             'propagate': False,
         },
         'django.db.backends': {
-            'handlers': ['file_info',],
+            'handlers': ['file_error',],
             'propagate': False,
         },
         'django.security': {
